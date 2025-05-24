@@ -1,0 +1,159 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h2 class="mb-4" style="font-size:1.5rem;"><i class="bi bi-pencil"></i> Edit Branch</h2>
+    <div class="card shadow mx-auto" style="max-width: 1100px;">
+        <div class="card-body">
+            <form action="{{ route('branches.update', $branch) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name of Branch</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $branch->name) }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="service_id" class="form-label">Service</label>
+                            <select class="form-select @error('service_id') is-invalid @enderror" id="service_id" name="service_id" required>
+                                <option value="">Select Service</option>
+                                @foreach($services as $service)
+                                    <option value="{{ $service->id }}" {{ old('service_id', $branch->service_id) == $service->id ? 'selected' : '' }}>{{ $service->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('service_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="contact_number" class="form-label">Contact Number</label>
+                            <input type="text" class="form-control @error('contact_number') is-invalid @enderror" id="contact_number" name="contact_number" value="{{ old('contact_number', $branch->contact_number) }}" required>
+                            @error('contact_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                                <option value="active" {{ old('status', $branch->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ old('status', $branch->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="mb-3 position-relative">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="2" autocomplete="off" required>{{ old('address', $branch->address) }}</textarea>
+                            <div id="address-suggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                            @error('address')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="latitude" class="form-label">Latitude</label>
+                                <input type="number" step="any" class="form-control @error('latitude') is-invalid @enderror" id="latitude" name="latitude" value="{{ old('latitude', $branch->latitude) }}">
+                                @error('latitude')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col">
+                                <label for="longitude" class="form-label">Longitude</label>
+                                <input type="number" step="any" class="form-control @error('longitude') is-invalid @enderror" id="longitude" name="longitude" value="{{ old('longitude', $branch->longitude) }}">
+                                @error('longitude')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <a href="{{ route('branches.index') }}" class="btn btn-secondary">Back</a>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Leaflet CSS/JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let map = L.map('map').setView([14.5995, 120.9842], 13); // Default to Manila
+    let marker;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    function setMarker(lat, lng) {
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng]).addTo(map);
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+    }
+
+    // Set marker and map view if lat/lng are present
+    window.addEventListener('DOMContentLoaded', function() {
+        let lat = document.getElementById('latitude').value;
+        let lng = document.getElementById('longitude').value;
+        if (lat && lng) {
+            setMarker(lat, lng);
+            map.setView([lat, lng], 16);
+        }
+    });
+
+    map.on('click', function(e) {
+        setMarker(e.latlng.lat, e.latlng.lng);
+    });
+
+    // Address autocomplete (Philippines only)
+    const addressInput = document.getElementById('address');
+    const suggestions = document.getElementById('address-suggestions');
+    let debounceTimeout;
+    addressInput.addEventListener('input', function() {
+        clearTimeout(debounceTimeout);
+        const query = this.value;
+        if (query.length < 3) {
+            suggestions.innerHTML = '';
+            return;
+        }
+        debounceTimeout = setTimeout(() => {
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=ph&q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    suggestions.innerHTML = '';
+                    data.slice(0, 5).forEach(item => {
+                        const option = document.createElement('button');
+                        option.type = 'button';
+                        option.className = 'list-group-item list-group-item-action';
+                        option.textContent = item.display_name;
+                        option.onclick = () => {
+                            addressInput.value = item.display_name;
+                            setMarker(item.lat, item.lon);
+                            map.setView([item.lat, item.lon], 17);
+                            suggestions.innerHTML = '';
+                        };
+                        suggestions.appendChild(option);
+                    });
+                });
+        }, 300);
+    });
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!addressInput.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.innerHTML = '';
+        }
+    });
+</script>
+@endsection 
