@@ -19,3 +19,4 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
 
 Route::resource('services', App\Http\Controllers\ServicesController::class);
 Route::resource('branches', App\Http\Controllers\BranchController::class);
+Route::resource('users', App\Http\Controllers\UserController::class);

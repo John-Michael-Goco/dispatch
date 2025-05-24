@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<h2 class="mb-4 ms-3" style="font-size:1.5rem;"><i class="bi bi-eye"></i> Branch Details</h2>
 <div class="container" style="max-width: 1100px;">
-    <h2 class="mb-4 ms-3" style="font-size:1.5rem;"><i class="bi bi-eye"></i> Branch Details</h2>
     <div class="card shadow">
         <div class="card-body">
             <div class="row">

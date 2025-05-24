@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<h1 class="mb-4 ms-3" style="font-size:1.5rem;"><i class="bi bi-gear"></i> Service Details</h1>
 <div class="container" style="max-width: 900px;">
-    <h1 class="mb-4"><i class="bi bi-gear"></i> Service Details</h1>
     <div class="card">
         <div class="card-body">
             <h4 class="card-title mb-3">{{ $service->name }}</h4>

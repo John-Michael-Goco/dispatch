@@ -84,8 +84,8 @@
 <body>
     <div class="login-container">
         <h1 class="login-title">Dispatch</h1>
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
             <div class="mb-4">
                 <label for="name" class="form-label">{{ __('Username') }}</label>
                 <input id="name" type="text" 
@@ -96,11 +96,11 @@
                     autocomplete="name" 
                     autofocus>
                 @error('name')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
             <div class="mb-4">
                 <label for="password" class="form-label">{{ __('Password') }}</label>
                 <input id="password" 
@@ -109,16 +109,16 @@
                     name="password" 
                     required 
                     autocomplete="current-password">
-                @error('password')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
+                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary btn-login">
-                    {{ __('Login') }}
-                </button>
+                                    {{ __('Login') }}
+                                </button>
             </div>
         </form>
     </div>

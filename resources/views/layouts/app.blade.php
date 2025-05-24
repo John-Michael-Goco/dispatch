@@ -89,7 +89,7 @@
                     <a class="nav-link {{ request()->is('services*') ? 'active' : '' }}" href="{{ route('services.index') }}"><i class="bi bi-gear"></i> Services</a>
                     <a class="nav-link {{ request()->is('branches*') ? 'active' : '' }}" href="{{ route('branches.index') }}"><i class="bi bi-diagram-3"></i> Branches</a>
                     <a class="nav-link {{ request()->is('incidents*') ? 'active' : '' }}" href="#"><i class="bi bi-exclamation-triangle"></i> Incidents</a>
-                    <a class="nav-link {{ request()->is('users*') ? 'active' : '' }}" href="#"><i class="bi bi-people"></i> Users</a>
+                    <a class="nav-link {{ request()->is('users*') ? 'active' : '' }}" href="{{ route('users.index') }}"><i class="bi bi-people"></i> Users</a>
                     <a class="nav-link {{ request()->is('reports*') ? 'active' : '' }}" href="#"><i class="bi bi-bar-chart"></i> Reports</a>
                 </nav>
             </div>
