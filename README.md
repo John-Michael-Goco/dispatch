@@ -1,6 +1,6 @@
 # Dispatch Management System
 
-A modern dispatch management system built with Laravel and Vue.js.
+A modern dispatch management system built with Laravel and Vue.js, designed to streamline dispatch operations and improve efficiency.
 
 ## Tech Stack
 
@@ -9,6 +9,7 @@ A modern dispatch management system built with Laravel and Vue.js.
 - **CSS Framework**: Bootstrap 5 + Tailwind CSS
 - **Build Tool**: Vite
 - **Database**: MySQL
+- **Development Environment**: XAMPP
 
 ## Prerequisites
 
@@ -17,12 +18,13 @@ A modern dispatch management system built with Laravel and Vue.js.
 - Composer
 - MySQL
 - XAMPP (for local development)
+- Git
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone [your-repository-url]
+git clone [https://github.com/John-Michael-Goco/dispatch]
 cd dispatch
 ```
 
@@ -94,21 +96,44 @@ php artisan optimize
 
 ## Project Structure
 
-- `app/` - Contains the core code of the application
-- `resources/` - Contains views, raw assets, and language files
-- `routes/` - Contains all route definitions
-- `public/` - Contains the entry point and compiled assets
-- `database/` - Contains database migrations and seeders
-- `config/` - Contains all configuration files
-- `tests/` - Contains automated tests
+```
+dispatch/
+├── app/                    # Application core
+│   ├── Http/              # Controllers, Middleware, Requests
+│   ├── Models/            # Eloquent models
+│   ├── Notifications/     # Notification classes
+│   └── Providers/         # Service providers
+├── resources/             # Frontend resources
+│   ├── js/               # JavaScript/Vue components
+│   ├── sass/             # SASS styles
+│   ├── css/              # CSS files
+│   └── views/            # Blade templates
+├── routes/               # Route definitions
+├── public/              # Public assets
+├── database/            # Migrations and seeders
+├── config/              # Configuration files
+└── tests/               # Automated tests
+```
 
 ## Features
 
+### Core Features
 - User authentication and authorization
-- Dispatch management
-- Real-time updates
-- Responsive design
+- Dispatch management and tracking
+- Real-time updates and notifications
+- Responsive design for all devices
 - API endpoints for mobile integration
+
+### Technical Features
+- RESTful API architecture
+- Vue.js components for dynamic UI
+- Bootstrap 5 + Tailwind CSS for styling
+- Database migrations and seeding
+- Automated testing support
+
+## API Documentation
+
+The API documentation is available at `/api/documentation` when running the application locally.
 
 ## Contributing
 
@@ -118,9 +143,22 @@ php artisan optimize
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+### Coding Standards
+- Follow PSR-12 coding standards for PHP
+- Use ESLint for JavaScript/Vue.js code
+- Write meaningful commit messages
+- Include tests for new features
+
 ## Security
 
-If you discover any security-related issues, please email [your-email] instead of using the issue tracker.
+If you discover any security-related issues, please email [jmgoco416@gmail.com] instead of using the issue tracker.
+
+## Support
+
+For support, please:
+1. Check the documentation
+2. Search existing issues
+3. Create a new issue if needed
 
 ## License
 
