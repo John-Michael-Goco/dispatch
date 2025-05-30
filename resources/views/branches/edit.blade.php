@@ -1,15 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Main container for edit branch form -->
 <div class="container">
+    <!-- Header section with title -->
     <h2 class="mb-4" style="font-size:1.5rem;"><i class="bi bi-pencil"></i> Edit Branch</h2>
+    <!-- Card container for the form -->
     <div class="card shadow mx-auto" style="max-width: 1100px;">
         <div class="card-body">
+            <!-- Branch edit form with PUT method -->
             <form action="{{ route('branches.update', $branch) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="row">
+                    <!-- Left column: Basic branch information -->
                     <div class="col-md-5">
+                        <!-- Branch name input field with existing value -->
                         <div class="mb-3">
                             <label for="name" class="form-label">Name of Branch</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $branch->name) }}" required>
@@ -17,6 +23,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <!-- Service selection dropdown with existing value -->
                         <div class="mb-3">
                             <label for="service_id" class="form-label">Service</label>
                             <select class="form-select @error('service_id') is-invalid @enderror" id="service_id" name="service_id" required>
@@ -29,6 +36,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <!-- Contact number input field with existing value -->
                         <div class="mb-3">
                             <label for="contact_number" class="form-label">Contact Number</label>
                             <input type="text" class="form-control @error('contact_number') is-invalid @enderror" id="contact_number" name="contact_number" value="{{ old('contact_number', $branch->contact_number) }}" required>
@@ -36,6 +44,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <!-- Status selection dropdown with existing value -->
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
@@ -47,7 +56,9 @@
                             @enderror
                         </div>
                     </div>
+                    <!-- Right column: Location information -->
                     <div class="col-md-7">
+                        <!-- Address input with autocomplete and existing value -->
                         <div class="mb-3 position-relative">
                             <label for="address" class="form-label">Address</label>
                             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="2" autocomplete="off" required>{{ old('address', $branch->address) }}</textarea>
@@ -56,9 +67,11 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <!-- Interactive map for location selection -->
                         <div class="mb-3">
                             <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
                         </div>
+                        <!-- Latitude and longitude input fields with existing values -->
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="latitude" class="form-label">Latitude</label>
@@ -77,6 +90,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Form action buttons -->
                 <div class="d-flex justify-content-between">
                     <a href="{{ route('branches.index') }}" class="btn btn-secondary">Back</a>
                     <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Update</button>
@@ -85,17 +99,22 @@
         </div>
     </div>
 </div>
-<!-- Leaflet CSS/JS -->
+
+<!-- Leaflet map resources -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Map initialization and interaction script -->
 <script>
-    let map = L.map('map').setView([14.5995, 120.9842], 13); // Default to Manila
+    // Initialize map centered on Manila
+    let map = L.map('map').setView([14.5995, 120.9842], 13);
     let marker;
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
+    // Function to set marker and update coordinates
     function setMarker(lat, lng) {
         if (marker) map.removeLayer(marker);
         marker = L.marker([lat, lng]).addTo(map);
@@ -113,11 +132,12 @@
         }
     });
 
+    // Set marker on map click
     map.on('click', function(e) {
         setMarker(e.latlng.lat, e.latlng.lng);
     });
 
-    // Address autocomplete (Philippines only)
+    // Address autocomplete functionality (Philippines only)
     const addressInput = document.getElementById('address');
     const suggestions = document.getElementById('address-suggestions');
     let debounceTimeout;
@@ -149,6 +169,7 @@
                 });
         }, 300);
     });
+
     // Hide suggestions when clicking outside
     document.addEventListener('click', function(e) {
         if (!addressInput.contains(e.target) && !suggestions.contains(e.target)) {

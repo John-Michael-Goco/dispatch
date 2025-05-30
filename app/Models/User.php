@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
+    // Enable factory and notification functionality
     use HasFactory, Notifiable;
 
     /**
@@ -17,6 +18,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    // Fields that can be mass assigned
     protected $fillable = [
         'name',
         'email',
@@ -28,6 +30,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    // Fields that should be hidden from arrays/JSON
     protected $hidden = [
         'password',
         'remember_token',
@@ -38,6 +41,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    // Define how certain fields should be cast
     protected function casts(): array
     {
         return [
@@ -49,6 +53,7 @@ class User extends Authenticatable
     /**
      * Get the user info associated with the user.
      */
+    // Get the user info associated with this user
     public function userInfo()
     {
         return $this->hasOne(UserInfo::class);

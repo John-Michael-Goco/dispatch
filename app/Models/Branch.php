@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Branch extends Model
 {
-    use HasFactory;
+    // Enable factory and soft delete functionality
+    use HasFactory, SoftDeletes;
 
+    // Fields that can be mass assigned
     protected $fillable = [
         'name',
         'service_id',
@@ -19,6 +22,7 @@ class Branch extends Model
         'status',
     ];
 
+    // Get the service this branch belongs to
     public function service()
     {
         return $this->belongsTo(Service::class);

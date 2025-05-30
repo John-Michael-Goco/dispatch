@@ -8,27 +8,38 @@ use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // List all branches with search and service filtering
+    public function index(Request $request)
     {
-        $branches = Branch::with('service')->get();
-        return view('branches.index', compact('branches'));
+        $query = Branch::with('service');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%")
+                    ->orWhere('contact_number', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('service_id')) {
+            $query->where('service_id', $request->service_id);
+        }
+
+        $branches = $query->orderBy('created_at', 'desc')->paginate(5);
+        $services = Service::all();
+
+        return view('branches.index', compact('branches', 'services'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Show form to create new branch
     public function create()
     {
         $services = Service::all();
         return view('branches.create', compact('services'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Save new branch to database
     public function store(Request $request)
     {
         $request->validate([
@@ -44,27 +55,21 @@ class BranchController extends Controller
         return redirect()->route('branches.index')->with('success', 'Branch created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // Display single branch details
     public function show(Branch $branch)
     {
         $branch->load('service');
         return view('branches.show', compact('branch'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    // Show form to edit branch
     public function edit(Branch $branch)
     {
         $services = Service::all();
         return view('branches.edit', compact('branch', 'services'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Update branch in database
     public function update(Request $request, Branch $branch)
     {
         $request->validate([
@@ -79,10 +84,8 @@ class BranchController extends Controller
         $branch->update($request->all());
         return redirect()->route('branches.index')->with('success', 'Branch updated successfully.');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    
+    // Delete branch from database
     public function destroy(Branch $branch)
     {
         $branch->delete();

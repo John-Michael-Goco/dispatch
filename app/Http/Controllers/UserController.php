@@ -10,31 +10,42 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the users.
-     */
-    public function index()
+    // List all users except admin with search functionality
+    public function index(Request $request)
     {
-        $users = User::with('userInfo')
-            ->where(function($query) {
+        $query = User::with('userInfo')
+            ->where(function ($query) {
                 $query->where('name', '!=', 'admin')
                     ->orWhere('email', '!=', 'admin@gmail.com');
-            })
-            ->get();
+            });
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('userInfo', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone_number', 'like', "%{$search}%")
+                            ->orWhere('address', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $users = $query->paginate(10);
         return view('users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new user.
-     */
+
+    // Show form to create new user
     public function create()
     {
         return view('users.create');
     }
 
-    /**
-     * Store a newly created user in storage.
-     */
+
+    // Save new user and their info to database
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -66,23 +77,21 @@ class UserController extends Controller
             ->with('success', 'User created successfully.');
     }
 
-    /**
-     * Display the specified user.
-     */
+
+    // Display single user details
     public function show(User $user)
     {
         if ($user->name === 'admin' && $user->email === 'admin@gmail.com') {
             return redirect()->route('users.index')
                 ->with('error', 'Access denied.');
         }
-        
+
         $user->load('userInfo');
         return view('users.show', compact('user'));
     }
 
-    /**
-     * Show the form for editing the specified user.
-     */
+
+    // Show form to edit user
     public function edit(User $user)
     {
         if ($user->name === 'admin' && $user->email === 'admin@gmail.com') {
@@ -94,9 +103,8 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    /**
-     * Update the specified user in storage.
-     */
+
+    // Update user and their info in database
     public function update(Request $request, User $user)
     {
         if ($user->name === 'admin' && $user->email === 'admin@gmail.com') {
@@ -131,9 +139,8 @@ class UserController extends Controller
             ->with('success', 'User updated successfully.');
     }
 
-    /**
-     * Remove the specified user from storage.
-     */
+
+    // Delete user from database
     public function destroy(User $user)
     {
         if ($user->name === 'admin' && $user->email === 'admin@gmail.com') {
@@ -145,4 +152,4 @@ class UserController extends Controller
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully.');
     }
-} 
+}
